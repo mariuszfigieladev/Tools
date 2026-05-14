@@ -1,0 +1,18 @@
+{
+  "projects": [
+    {
+      "id": 1,
+      "title": "Document Indexer",
+      "description": "A Python-based desktop application designed for handling, processing, and indexing spreadsheet-style data efficiently.",
+      "technologies": ["Python", "GUI", "Spreadsheets"],
+      "github_url": "https://github.com/mariuszfigieladev/document-indexer"
+    },
+    {
+      "id": 2,
+      "title": "Developer Tools Repository",
+      "description": "A collection of custom scripts, automation tools, and configuration utilities managing development workflows.",
+      "technologies": ["Git", "Python", "Bash"],
+      "github_url": "https://github.com/mariuszfigieladev/tools"
+    }
+  ]
+}

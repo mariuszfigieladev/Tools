@@ -1,0 +1,16 @@
+{
+  "first_name": "Mariusz",
+  "last_name": "Figiel",
+  "title": "Software Developer / Python Programmer",
+  "about_me": "Passionate Software Developer with experience in building desktop applications, data analysis, and process automation. Currently expanding expertise into modern web technologies and full-stack development.",
+  "skills": {
+    "languages": ["Python", "SQL", "C#", "JavaScript"],
+    "frameworks_libraries": ["FastAPI", "Pandas", "Tkinter"],
+    "tools_devops": ["Git", "Docker", "Ollama", "GitHub"]
+  },
+  "contact": {
+    "email": "mariusz.figiel@example.com",
+    "github": "https://github.com/mariuszfigieladev",
+    "location": "Rumia, Poland"
+  }
+}
