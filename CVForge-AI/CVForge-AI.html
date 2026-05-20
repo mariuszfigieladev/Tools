@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>CVForge-AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+
+<body class="bg-slate-900 text-white font-sans antialiased">
+    <div id="root"></div>
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        const App = () => {
+            const [apiKey, setApiKey] = useState(localStorage.getItem('geminiApiKey') || '');
+            const [model, setModel] = useState('gemini-3.1-flash-lite');
+            const [masterCV, setMasterCV] = useState('');
+            const [jobDesc, setJobDesc] = useState('');
+            const [result, setResult] = useState('');
+            const [loading, setLoading] = useState(false);
+
+            useEffect(() => {
+                localStorage.setItem('geminiApiKey', apiKey);
+            }, [apiKey]);
+
+            const handleTailor = async () => {
+                if (!apiKey || !masterCV || !jobDesc) return;
+                setLoading(true);
+                setResult('');
+                try {
+                    const response = await fetch("http://localhost:9999/api/generate", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            key: apiKey,
+                            model: model,
+                            payload: {
+                                contents: [{
+                                    role: "user",
+                                    parts: [{
+                                        text: `Role: You are an Expert Career Coach and ATS Optimization Specialist.\nTask: Analyze the provided 'Master CV' and 'Job Description' (JD). Rewrite and optimize the 'Master CV' to perfectly align with the specific requirements, skills, and keywords found in the 'Job Description'.\n\nInput Data:\n- Master CV:\n${masterCV}\n\n- Job Description:\n${jobDesc}`
+                                    }]
+                                }]
+                            }
+                        })
+                    });
+
+                    const json = await response.json();
+
+                    if (!response.ok) {
+                        setResult(`Error: ${JSON.stringify(json.detail || json)}`);
+                    } else if (json.candidates && json.candidates[0].content.parts) {
+                        setResult(json.candidates[0].content.parts[0].text);
+                    } else {
+                        setResult(JSON.stringify(json, null, 2));
+                    }
+                } catch (err) {
+                    setResult(`Fetch Error: ${err.message}`);
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            return (
+                <div className="p-6 max-w-7xl mx-auto flex flex-col gap-6 min-h-screen">
+                    <header className="flex flex-wrap items-center justify-between gap-4 bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-lg">
+                        <h1 className="text-xl font-bold tracking-tight text-blue-400">🚀 CVForge-AI</h1>
+                        <div className="flex flex-wrap items-center gap-3">
+                            <select value={model} onChange={e => setModel(e.target.value)} className="bg-slate-900 border border-slate-600 rounded-lg px-3 py-1.5 text-sm outline-none focus:border-blue-500">
+                                <option value="gemini-3.1-flash-lite">gemini-3.1-flash-lite</option>
+                                <option value="gemini-3.5-flash">gemini-3.5-flash</option>
+                                <option value="gemini-2.0-flash">gemini-2.0-flash</option>
+                            </select>
+                            <input type="password" value={apiKey} onChange={e => setApiKey(e.target.value)} placeholder="Gemini API Key" className="bg-slate-900 border border-slate-600 rounded-lg px-3 py-1.5 text-sm w-64 outline-none focus:border-blue-500" />
+                        </div>
+                    </header>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="flex flex-col gap-2">
+                            <label className="text-sm font-semibold text-slate-400">Master CV</label>
+                            <textarea onChange={e => setMasterCV(e.target.value)} className="bg-slate-800 border border-slate-700 rounded-xl p-4 h-80 font-mono text-sm outline-none focus:border-blue-500 resize-none shadow-inner" placeholder="Paste your raw CV text or JSON here..." />
+                        </div>
+                        <div className="flex flex-col gap-2">
+                            <label className="text-sm font-semibold text-slate-400">Job Description</label>
+                            <textarea onChange={e => setJobDesc(e.target.value)} className="bg-slate-800 border border-slate-700 rounded-xl p-4 h-80 text-sm outline-none focus:border-blue-500 resize-none shadow-inner" placeholder="Paste target job description here..." />
+                        </div>
+                    </div>
+
+                    <button onClick={handleTailor} disabled={loading || !apiKey || !masterCV || !jobDesc} className="w-full bg-blue-600 hover:bg-blue-500 disabled:bg-slate-700 text-white font-bold py-3 px-6 rounded-xl transition shadow-md disabled:cursor-not-allowed">
+                        {loading ? 'Processing...' : 'Tailor CV'}
+                    </button>
+
+                    <div className="flex flex-col gap-2 flex-1">
+                        <label className="text-sm font-semibold text-slate-400">Optimized Output</label>
+                        <pre className="flex-1 bg-slate-950 border border-slate-800 rounded-xl p-5 text-sm font-mono whitespace-pre-wrap shadow-inner overflow-y-auto min-h-[300px] text-slate-300">{result || 'Tailored CV structure will appear here...'}</pre>
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+
+</html>
