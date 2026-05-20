@@ -16,19 +16,29 @@ A lightweight tool to adapt your professional CV to specific job requirements us
 python3 -m venv .venv
 ```
 3. Run comend in folder with ```.venv```
+- Linux - POP!_OS
+
 ```bash
-Linux - POP!_OS
 source .venv/bin/activate
 ```
-```
-Windows 10/11
+-Windows 10/11
+
+```bash
 .venv\Scripts\activate
 ```
 
 
-3. Install dependencies: pip install fastapi uvicorn httpx
+3. Install dependencies: 
+```bash
+pip install -r requirements.txt
+```
 
-4. Run proxy: uvicorn server:app --reload --port 9999
+
+4. Run proxy: 
+
+```bash
+uvicorn server:app --reload --port 9999
+```
 
 ### Frontend
 
